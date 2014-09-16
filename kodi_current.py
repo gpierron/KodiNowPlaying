@@ -108,7 +108,7 @@ def play_what():
 def xchat_kodi_cmd(argv, arg_to_eol, c):
     if len(argv) == 1:
         current=play_what()
-        xchat.command('me %s' % current)
+        xchat.command('me %s' % current.encode('iso-8859-1'))
 
 xchat.hook_command("zik", xchat_kodi_cmd, help="/zik")
 
