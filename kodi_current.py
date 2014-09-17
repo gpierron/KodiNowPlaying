@@ -8,7 +8,7 @@
 
 
 __module_name__ = "Kodi NowPlaying"
-__module_version__ = "0.84b"
+__module_version__ = "0.85b"
 __module_description__ = "A dirty/quickly adapted script to print currently playing music on distant Kodi"
 
 print "\003",__module_name__, __module_version__,"has been loaded\003"
@@ -17,12 +17,17 @@ import xchat
 import socket
 import json
 
+BUFFER_SIZE = 1024
+
 ''' USERS SHOULD MODIFY THIS SECTION '''
 XBMC_IP = "192.168.1.210"
 XBMC_PORT = 9090
 
 
-BUFFER_SIZE = 1024
+''' USERS MAY MODIFY THIS TOO '''
+COMPATIBLE_ENCODING = 'iso-8859-1'
+SCRIPTCMD = 'zik'
+
 
 def now_playing(item, properties):
     if item:
@@ -108,7 +113,8 @@ def play_what():
 def xchat_kodi_cmd(argv, arg_to_eol, c):
     if len(argv) == 1:
         current=play_what()
-        xchat.command('me %s' % current.encode('iso-8859-1'))
+        xchat.command('me %s' % current.encode(COMPATIBLE_ENCODING))
+    return xchat.EAT_ALL
 
-xchat.hook_command("zik", xchat_kodi_cmd, help="/zik")
+xchat.hook_command(SCRIPTCMD, xchat_kodi_cmd, help="/"+SCRIPTCMD)
 
