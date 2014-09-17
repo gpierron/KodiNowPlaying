@@ -8,7 +8,7 @@
 
 
 __module_name__ = "Kodi NowPlaying"
-__module_version__ = "0.85b"
+__module_version__ = "0.86b"
 __module_description__ = "A dirty/quickly adapted script to print currently playing music on distant Kodi"
 
 print "\003",__module_name__, __module_version__,"has been loaded\003"
@@ -31,7 +31,7 @@ SCRIPTCMD = 'zik'
 
 def now_playing(item, properties):
     if item:
-        disp_prog = ['.','.','.','.','.','.','.','.','.','.']
+        disp_prog = ['.']*10
         progression=(int(properties['percentage']/10))
         for i in range(progression):
             disp_prog[i]='*'
