@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
 # author (alterer is a more suitable word) : Guillaume Pierron - "Guiwiz"
+#
 # This script is largely based on the work of Arnaud Bertrand - "Arn-O"
 # You can find his original work (a wonderful python script to control XBMC) here :
 # https://github.com/Arn-O/py-xbmc-remote-controller
-
-
+#
+# This script is also based on the work (a python script for xchat/hexchat to control
+# the linux player amarok locally) of zir0faive, not publically available yet :) 
 
 __module_name__ = "Kodi NowPlaying"
-__module_version__ = "0.86b"
+__module_version__ = "0.89b"
 __module_description__ = "A dirty/quickly adapted script to print currently playing music on distant Kodi"
 
 print "\003",__module_name__, __module_version__,"has been loaded\003"
@@ -16,6 +18,7 @@ print "\003",__module_name__, __module_version__,"has been loaded\003"
 import xchat
 import socket
 import json
+from string import Template
 
 BUFFER_SIZE = 1024
 
@@ -28,24 +31,44 @@ XBMC_PORT = 9090
 COMPATIBLE_ENCODING = 'iso-8859-1'
 SCRIPTCMD = 'zik'
 
+'''STRING FORMATTING PREFS PART'''
+TITLE = 'Kodi '
+DISPLAY_PATTERN = TITLE + '15# $artist 15- $title ' + \
+		  '15(#$track 15- $album 15- $year15) ' + \
+		  '15[$p_min15:$p_0sec15/$t_min15:$t_0sec ' + \
+		  '15,15$elapsed14,14$remaining15]' + \
+		  '15[$audiocodec 15- $audiobitrate kbps15] '
+BAR_LENGTH = 10
+CHAR_ELAPSED = '#'
+CHAR_REMAINING = '='
 
 def now_playing(item, properties):
     if item:
-        disp_prog = ['.']*10
-        progression=(int(properties['percentage']/10))
-        for i in range(progression):
-            disp_prog[i]='*'
+        #constructing initial data
+        full_data = {'audiobitrate':
+        properties['currentaudiostream']['bitrate']/1000.0,
+        'audiocodec': properties['currentaudiostream']['codec']}
+        full_data.update(item)
+        full_data.update(properties)
        
-        str_ret= "Kodi :::: [ %s - %s | %s - %s ] [ %s | %02d:%02d:%02d / %02d:%02d:%02d ] ::::"  % (
-            item['artist'][0], item['title'],
-            item['year'], item['album'],
-            ''.join(disp_prog),  
-            properties['time']['hours'],
-            properties['time']['minutes'],
-            properties['time']['seconds'],
-            properties['totaltime']['hours'],
-            properties['totaltime']['minutes'],
-            properties['totaltime']['seconds'])
+        # retrieving first artist field only
+        if item['artist']:
+            full_data['artist'] = item['artist'][0]
+
+        # computing progress bar and time values
+        n = int(BAR_LENGTH * properties['percentage'] / 100)
+        full_data['elapsed'] = CHAR_ELAPSED * n
+        full_data['remaining'] = CHAR_REMAINING * (BAR_LENGTH - n)
+        full_data['p_min'] = properties['time']['hours'] * 60 + \
+                             properties['time']['minutes'] 
+        full_data['p_0sec'] = "%02d" % properties['time']['seconds']
+        full_data['t_min'] = properties['totaltime']['hours'] * 60 + \
+                             properties['totaltime']['minutes'] 
+        full_data['t_0sec'] = "%02d" % properties['totaltime']['seconds']
+        
+
+        str_ret = Template(DISPLAY_PATTERN).substitute(full_data)
+      
     else:
         str_ret= "[is not playing anything]"
     return str_ret
@@ -58,9 +81,10 @@ def get_item(ip, port):
                 "properties": [
                     "album",
                     "title",
+                    "track",
                     "artist",
                     "year",
-                    "rating" ] },
+                    "genre" ] },
             "id": 1}
     ret = call_api(ip, port, command)
     item = None
@@ -79,7 +103,8 @@ def get_properties(ip, port):
                     "time",
                     "totaltime",
                     "percentage",
-                    "position" ] },
+                    "position",
+                    "currentaudiostream"] },
             "id": 1}
     ret = call_api(ip, port, command)
     result = None
@@ -117,4 +142,3 @@ def xchat_kodi_cmd(argv, arg_to_eol, c):
     return xchat.EAT_ALL
 
 xchat.hook_command(SCRIPTCMD, xchat_kodi_cmd, help="/"+SCRIPTCMD)
-
