@@ -10,7 +10,7 @@
 # the linux player amarok locally) of zir0faive, not publically available yet :) 
 
 __module_name__ = "Kodi NowPlaying"
-__module_version__ = "0.89b"
+__module_version__ = "0.89c"
 __module_description__ = "A dirty/quickly adapted script to print currently playing music on distant Kodi"
 
 print "\003",__module_name__, __module_version__,"has been loaded\003"
@@ -36,8 +36,8 @@ TITLE = 'Kodi '
 DISPLAY_PATTERN = TITLE + '15# $artist 15- $title ' + \
 		  '15(#$track 15- $album 15- $year15) ' + \
 		  '15[$p_min15:$p_0sec15/$t_min15:$t_0sec ' + \
-		  '15,15$elapsed14,14$remaining15]' + \
-		  '15[$audiocodec 15- $audiobitrate kbps15] '
+		  '15,15$elapsed14,14$remaining15]' 
+
 BAR_LENGTH = 10
 CHAR_ELAPSED = '#'
 CHAR_REMAINING = '='
@@ -45,9 +45,7 @@ CHAR_REMAINING = '='
 def now_playing(item, properties):
     if item:
         #constructing initial data
-        full_data = {'audiobitrate':
-        properties['currentaudiostream']['bitrate']/1000.0,
-        'audiocodec': properties['currentaudiostream']['codec']}
+        full_data = {}
         full_data.update(item)
         full_data.update(properties)
        
@@ -103,8 +101,7 @@ def get_properties(ip, port):
                     "time",
                     "totaltime",
                     "percentage",
-                    "position",
-                    "currentaudiostream"] },
+                    "position"] },
             "id": 1}
     ret = call_api(ip, port, command)
     result = None
