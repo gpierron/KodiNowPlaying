@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# author (alterer is a more suitable word) : Guillaume Pierron - "Guiwiz"
+# author (alterer is a more suitable word) : Guillaume Pierron
 #
 # This script is largely based on the work of Arnaud Bertrand - "Arn-O"
 # You can find his original work (a wonderful python script to control XBMC) here :
