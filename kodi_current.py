@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# author (alterer is a more suitable word) : Guillaume Pierron
+# author (alterer is a more suitable word) : Guillaume Pierron - "Guiwiz"
 #
 # This script is largely based on the work of Arnaud Bertrand - "Arn-O"
 # You can find his original work (a wonderful python script to control XBMC) here :
@@ -32,8 +32,8 @@ COMPATIBLE_ENCODING = 'iso-8859-1'
 SCRIPTCMD = 'zik'
 
 '''STRING FORMATTING PREFS PART'''
-TITLE = 'Kodi '
-DISPLAY_PATTERN = TITLE + '15# $artist 15- $title ' + \
+TITLE = 'Kodi '
+DISPLAY_PATTERN = TITLE + '15# $artist 15- $title ' + \
 		  '15(#$track 15- $album 15- $year15) ' + \
 		  '15[$p_min15:$p_0sec15/$t_min15:$t_0sec ' + \
 		  '15,15$elapsed14,14$remaining15]' 
